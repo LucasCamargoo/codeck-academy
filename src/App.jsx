@@ -1,4 +1,6 @@
 import Navbar from './components/Navbar'
+import AdminPanel from './components/AdminPanel'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Zap, Monitor, Users, CheckCircle, Star, Code2, Brain, Globe, CalendarDays, Timer } from 'lucide-react'
 
@@ -10,6 +12,11 @@ const fadeUp = (delay = 0) => ({
 })
 
 function App() {
+  const [adminLogado, setAdminLogado] = useState(false)
+  if (adminLogado) {
+    return <AdminPanel onLogout={() => setAdminLogado(false)} />
+  }
+
   return (
     <main className="bg-[#07060f] min-h-screen overflow-x-hidden">
 
@@ -22,7 +29,7 @@ function App() {
 
       <div className="fixed -top-50 left-1/2 -translate-x-1/2 w-175 h-175 bg-purple-700/20 rounded-full blur-[120px] pointer-events-none" />
 
-      <Navbar />
+      <Navbar onAdminLogin={() => setAdminLogado(true)} />
 
       <section className="min-h-screen flex items-center px-6 pt-28 pb-16 relative">
         <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
