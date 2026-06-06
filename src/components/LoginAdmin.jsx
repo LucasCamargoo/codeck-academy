@@ -88,7 +88,7 @@ function LoginAdmin({ onClose, onLogin  }) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => {
-                if (email === 'admin.codeck' && password === 'codeck@2025') {
+                if (email === 'admin.codeck' && password === 'codeck@2026') {
                   onClose()
                   setTimeout(() => onLogin(), 150)
                 } else {

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShieldCheck, LogOut, Users, ChevronRight, BookOpen, Pencil, LayoutDashboard, GraduationCap, TrendingUp, Trash2, Search, Menu, X } from 'lucide-react'
+import { ShieldCheck, LogOut, Users, ChevronRight, BookOpen, Trophy , Pencil, LayoutDashboard, GraduationCap, TrendingUp, Trash2, Search, Menu, X } from 'lucide-react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import ModalNewUser from './admin/ModalNewUser'
 import ModalNewClass from './admin/ModalNewClass'
 import ModalEditUser from './admin/ModalEditUser'
 import ModalEditClass from './admin/ModalEditClass'
+import RankingPage from './admin/RankingPage'
 import { supabase } from '../lib/supabase'
 
 function AdminPanel({ onLogout }) {
@@ -17,6 +18,7 @@ function AdminPanel({ onLogout }) {
   const [editingClass, setEditingClass] = useState(null)
   const [users, setUsers] = useState([])
   const [classes, setClasses] = useState([])
+  const [ranking, setRanking] = useState([])
   const [loading, setLoading] = useState(false)
   const [searchUser, setSearchUser] = useState('')
 
@@ -118,6 +120,7 @@ function AdminPanel({ onLogout }) {
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={16} /> },
     { id: 'users', label: 'Usuários', icon: <Users size={16} /> },
     { id: 'classes', label: 'Turmas', icon: <BookOpen size={16} /> },
+    { id: 'ranking', label: 'Ranking', icon: <Trophy size={16} /> }
   ]
 
   const handleNavigate = (id) => {
@@ -488,6 +491,10 @@ function AdminPanel({ onLogout }) {
               )}
             </motion.div>
           )}
+
+            {activePage === 'ranking' && (
+              <RankingPage users={users} classes={classes} />
+            )}
 
         </div>
       </div>

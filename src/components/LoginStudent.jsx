@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Lock, Eye, EyeOff, GraduationCap, User } from 'lucide-react'
 
-function LoginStudent({ onClose }) {
+function LoginStudent({ onClose, onLogin }) {
   const [showPassword, setShowPassword] = useState(false)
   const [usuario, setUsuario] = useState('')
   const [password, setPassword] = useState('')
@@ -87,6 +87,14 @@ function LoginStudent({ onClose }) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
+              onClick={() => {
+                if (usuario === 'aluno.codeck' && password === 'codeck@2026') {
+                  onLogin()
+                  onClose()
+                } else {
+                  alert('Usuário ou senha incorretos!')
+                }
+              }}
               className="w-full bg-linear-to-r from-cyan-600 to-purple-600 text-white font-black py-3.5 rounded-xl text-sm cursor-pointer hover:opacity-90 transition-opacity mt-2"
             >
               Entrar

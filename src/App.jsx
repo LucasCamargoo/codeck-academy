@@ -1,5 +1,7 @@
 import Navbar from './components/Navbar'
 import AdminPanel from './components/AdminPanel'
+import StudentPanel from './components/StudentPanel'
+import LoginStudent from './components/LoginStudent'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Zap, Monitor, Users, CheckCircle, Star, Code2, Brain, Globe, CalendarDays, Timer } from 'lucide-react'
@@ -12,9 +14,15 @@ const fadeUp = (delay = 0) => ({
 })
 
 function App() {
+  const [studentLogado, setStudentLogado] = useState(false)
+  const [showLoginStudent, setShowLoginStudent] = useState(false)
   const [adminLogado, setAdminLogado] = useState(false)
   if (adminLogado) {
     return <AdminPanel onLogout={() => setAdminLogado(false)} />
+  }
+
+  if (studentLogado) {
+   return <StudentPanel onLogout={() => setStudentLogado(false)} />
   }
 
   return (
@@ -29,7 +37,7 @@ function App() {
 
       <div className="fixed -top-50 left-1/2 -translate-x-1/2 w-175 h-175 bg-purple-700/20 rounded-full blur-[120px] pointer-events-none" />
 
-      <Navbar onAdminLogin={() => setAdminLogado(true)} />
+      <Navbar onAdminLogin={() => setAdminLogado(true)} onStudentLogin={() => setStudentLogado(true)} />
 
       <section className="min-h-screen flex items-center px-6 pt-28 pb-16 relative">
         <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -59,9 +67,8 @@ function App() {
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
               className="text-gray-400 text-base leading-relaxed mb-8 max-w-md"
             >
-              Aprenda, pratique e construa seu futuro na tecnologia. Comece{' '}
-              <span className="text-green-400 font-bold">100% gratuito</span> com lógica
-              de programação e avance para a trilha premium de sites e e-commerce.
+              Aprenda, pratique e construa seu futuro na tecnologia. Comece com lógica
+              de programação e avance para a trilha completa de sites e e-commerce.
             </motion.p>
 
             <motion.ul
@@ -91,8 +98,8 @@ function App() {
             <div className="relative bg-[#0f0d1a] border border-purple-500/30 rounded-3xl p-8 flex flex-col gap-5 backdrop-blur-sm">
 
               <div className="flex items-center justify-between">
-                <span className="bg-green-500/15 border border-green-500/30 text-green-400 text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
-                  🎉 Módulo 1 — Grátis
+                <span className="bg-purple-500/15 border border-purple-500/30 text-purple-400 text-xs font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
+                  📘 Módulo 1
                 </span>
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
@@ -103,12 +110,11 @@ function App() {
 
               <div>
                 <h3 className="text-white text-2xl font-black mb-1">Lógica de Programação</h3>
-                <p className="text-gray-500 text-sm">A base que todo dev precisa — sem custo algum.</p>
+                <p className="text-gray-500 text-sm">A base que todo dev precisa para começar sua jornada.</p>
               </div>
 
-              <div className="flex items-end gap-2 py-2 border-y border-white/5">
-                <span className="text-5xl font-black text-white leading-none">R$ 0</span>
-                <span className="text-green-400 text-sm font-bold mb-1">/ 3 meses</span>
+              <div className="py-2 border-y border-white/5">
+                <span className="text-purple-400 text-sm font-bold">Entre em contato para saber mais</span>
               </div>
 
               <ul className="flex flex-col gap-2.5">
@@ -146,11 +152,11 @@ function App() {
                 whileTap={{ scale: 0.97 }}
                 className="w-full bg-linear-to-r from-purple-600 via-fuchsia-600 to-cyan-500 text-white font-black py-4 rounded-2xl text-base cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center"
               >
-                ⚡ Quero Começar Grátis
+                ⚡ Quero Começar
               </motion.a>
 
               <p className="text-center text-gray-600 text-xs">
-                Sem cartão de crédito · Sem compromisso
+                Vagas limitadas · Turma ao vivo
               </p>
             </div>
           </motion.div>
@@ -182,7 +188,7 @@ function App() {
                 borderColor: 'border-purple-500/50', glowColor: 'purple',
                 icon: <img src="/icons/python.svg" alt="Python" className="w-14 h-14 object-contain drop-shadow-lg" />,
                 title: 'Lógica de Programação', highlight: 'com Python', highlightColor: 'text-yellow-400',
-                badge: '🎉 GRÁTIS', badgeClass: 'bg-green-500/20 border border-green-500/30 text-green-400',
+                badge: null, badgeClass: null,
                 sub: 'Comece agora e prepare sua base para o sucesso.',
                 topics: null, duration: '3 meses',
               },
@@ -348,8 +354,8 @@ function App() {
           <div className="absolute inset-0 bg-linear-to-r from-purple-600/20 to-cyan-500/20 rounded-3xl blur-3xl pointer-events-none" />
           <div className="relative bg-[#0f0d1a] border border-purple-500/30 rounded-3xl p-12 flex flex-col items-center gap-6">
 
-            <span className="bg-green-500/15 border border-green-500/30 text-green-400 text-xs font-black px-4 py-2 rounded-full uppercase tracking-widest">
-              🎉 Módulo 1 — 100% Gratuito
+            <span className="bg-purple-500/15 border border-purple-500/30 text-purple-400 text-xs font-black px-4 py-2 rounded-full uppercase tracking-widest">
+              📘 Módulo 1 — Lógica de Programação
             </span>
 
             <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
@@ -360,7 +366,7 @@ function App() {
             </h2>
 
             <p className="text-gray-400 text-lg max-w-lg">
-              Dê o primeiro passo sem gastar nada. Comece com lógica de programação e evolua até construir aplicações com IA.
+              Dê o primeiro passo na sua carreira. Comece com lógica de programação e evolua até construir aplicações com IA.
             </p>
 
             <motion.a
@@ -371,10 +377,10 @@ function App() {
               className="bg-linear-to-r from-purple-600 via-fuchsia-600 to-cyan-500 text-white font-black px-10 py-5 rounded-2xl text-lg cursor-pointer hover:opacity-90 transition-opacity flex items-center gap-3"
             >
               <Zap size={20} className="text-yellow-300" />
-              Começar Grátis Agora
+              Quero Começar
             </motion.a>
 
-            <p className="text-gray-600 text-sm">Sem cartão de crédito · Vagas limitadas · Turma ao vivo</p>
+            <p className="text-gray-600 text-sm">Vagas limitadas · Turma ao vivo</p>
 
           </div>
         </div>
@@ -392,6 +398,13 @@ function App() {
           <p className="text-gray-600 text-xs">© 2025 Codeck Academy · Todos os direitos reservados</p>
         </div>
       </footer>
+
+      {showLoginStudent && (
+        <LoginStudent
+          onClose={() => setShowLoginStudent(false)}
+          onLogin={() => setStudentLogado(true)}
+        />
+      )}
     </main>
   )
 }

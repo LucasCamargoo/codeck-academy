@@ -4,7 +4,7 @@ import { GraduationCap, ShieldCheck, ChevronDown } from 'lucide-react'
 import LoginAdmin from './LoginAdmin'
 import LoginStudent from './LoginStudent'
 
-function Navbar({ onAdminLogin }) {
+function Navbar({ onAdminLogin, onStudentLogin }) {
   const [scrolled, setScrolled] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [showLoginAdmin, setShowLoginAdmin] = useState(false)
@@ -94,7 +94,13 @@ function Navbar({ onAdminLogin }) {
         />
       )}
       {showLoginStudent && (
-        <LoginStudent onClose={() => setShowLoginStudent(false)} />
+        <LoginStudent 
+          onClose={() => setShowLoginStudent(false)} 
+          onLogin={() => {
+            setShowLoginStudent(false)
+            onStudentLogin()
+          }}
+        />
       )}
     </>
   )
