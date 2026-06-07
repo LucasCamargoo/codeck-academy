@@ -7,7 +7,9 @@ import ModalNewClass from './admin/ModalNewClass'
 import ModalEditUser from './admin/ModalEditUser'
 import ModalEditClass from './admin/ModalEditClass'
 import RankingPage from './admin/RankingPage'
+import Content from './admin/Content'
 import { supabase } from '../lib/supabase'
+import { Video } from 'lucide-react'
 
 function AdminPanel({ onLogout }) {
   const [activePage, setActivePage] = useState('dashboard')
@@ -120,7 +122,8 @@ function AdminPanel({ onLogout }) {
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={16} /> },
     { id: 'users', label: 'Usuários', icon: <Users size={16} /> },
     { id: 'classes', label: 'Turmas', icon: <BookOpen size={16} /> },
-    { id: 'ranking', label: 'Ranking', icon: <Trophy size={16} /> }
+    { id: 'content', label: 'Conteúdo', icon: <Video size={16} /> },
+    { id: 'ranking', label: 'Ranking', icon: <Trophy size={16} /> },
   ]
 
   const handleNavigate = (id) => {
@@ -495,6 +498,8 @@ function AdminPanel({ onLogout }) {
             {activePage === 'ranking' && (
               <RankingPage users={users} classes={classes} />
             )}
+
+            {activePage === 'content' && <Content classes={classes} />}
 
         </div>
       </div>
