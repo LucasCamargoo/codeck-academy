@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogOut, LayoutDashboard, BookOpen, Trophy, ClipboardList, ChevronRight, GraduationCap, Star, Crown, Medal, Menu, X, TrendingUp, CheckCircle, Lock, Play, Timer, Zap } from 'lucide-react'
+import { LogOut, LayoutDashboard, BookOpen, Trophy, ClipboardList, ChevronRight, GraduationCap, Star, Crown, Medal, Menu, X, Zap } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 const MOCK_USER = { id: 'mock-001', name: 'João Silva', username: 'aluno.codeck', class_id: null }
@@ -8,7 +8,6 @@ const MOCK_USER = { id: 'mock-001', name: 'João Silva', username: 'aluno.codeck
 export default function StudentPanel({ onLogout }) {
   const [activePage, setActivePage] = useState('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [attempts, setAttempts] = useState([])
   const [allRankings, setAllRankings] = useState([])
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
@@ -19,47 +18,20 @@ export default function StudentPanel({ onLogout }) {
 
   const fetchData = async () => {
     setLoading(true)
-
     const { data: usersData } = await supabase.from('users').select('*')
-    const { data: attemptsData } = await supabase.from('quiz_attempts').select('*').order('created_at', { ascending: false })
-
     if (usersData) setUsers(usersData)
-    if (attemptsData) {
-      setAttempts(attemptsData)
-
-      const scoreMap = {}
-      attemptsData.forEach((a) => {
-        if (!scoreMap[a.user_id]) scoreMap[a.user_id] = 0
-        scoreMap[a.user_id] += a.score ?? 0
-      })
-      const ranked = (usersData ?? [])
-        .map((u) => ({ ...u, totalScore: scoreMap[u.id] ?? 0 }))
-        .filter((u) => (scoreMap[u.id] ?? 0) > 0)
-        .sort((a, b) => b.totalScore - a.totalScore)
-      setAllRankings(ranked)
-    }
-
     setLoading(false)
   }
 
-  const myAttempts = attempts.filter((a) => a.user_id === MOCK_USER.id)
-  const myScore = myAttempts.reduce((sum, a) => sum + (a.score ?? 0), 0)
-  const myPosition = allRankings.findIndex((u) => u.id === MOCK_USER.id) + 1
-
-  const contents = [
-    { id: 1, title: 'Introdução à Lógica', duration: '45 min', done: true, module: 'Módulo 1' },
-    { id: 2, title: 'Variáveis e Tipos', duration: '50 min', done: true, module: 'Módulo 1' },
-    { id: 3, title: 'Condicionais e Loops', duration: '60 min', done: true, module: 'Módulo 1' },
-    { id: 4, title: 'Funções em Python', duration: '55 min', done: false, module: 'Módulo 1' },
-    { id: 5, title: 'Listas e Dicionários', duration: '65 min', done: false, module: 'Módulo 1' },
-    { id: 6, title: 'Projeto Final — Módulo 1', duration: '90 min', done: false, module: 'Módulo 1', locked: true },
-  ]
-  const doneLessons = contents.filter((c) => c.done).length
-  const progress = Math.round((doneLessons / contents.length) * 100)
+  const myAttempts = []
+  const progress = 0
+  const doneLessons = 0
+  const contents = []
+  const myScore = 0
+  const myPosition = 0
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={16} /> },
-    { id: 'contents', label: 'Aulas', icon: <BookOpen size={16} /> },
     { id: 'quizzes', label: 'Provas', icon: <ClipboardList size={16} /> },
     { id: 'ranking', label: 'Ranking', icon: <Trophy size={16} /> },
   ]
@@ -171,7 +143,7 @@ export default function StudentPanel({ onLogout }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
-                  { label: 'Pontuação Total', value: myScore, icon: <Zap size={20} />, sub: 'pts acumulados', color: 'text-yellow-400' },
+                  { label: 'Pontuação Total', value: myScore, sub: 'pts acumulados', color: 'text-yellow-400' },
                   { label: 'Provas Realizadas', value: myAttempts.length, icon: <ClipboardList size={20} />, sub: 'provas feitas', color: 'text-cyan-400' },
                   { label: 'Posição no Ranking', value: myPosition > 0 ? `#${myPosition}` : '—', icon: <Trophy size={20} />, sub: 'entre todos alunos', color: 'text-purple-400' },
                 ].map((stat, i) => (
@@ -190,25 +162,6 @@ export default function StudentPanel({ onLogout }) {
                     </div>
                   </motion.div>
                 ))}
-              </div>
-
-              <div className="bg-[#0f0d1a] border border-white/5 rounded-2xl p-6 flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-white font-black text-base">Progresso do Curso</h2>
-                    <p className="text-gray-500 text-xs mt-0.5">Módulo 1 — Lógica de Programação</p>
-                  </div>
-                  <span className="text-cyan-400 font-black text-2xl">{progress}%</span>
-                </div>
-                <div className="w-full h-2.5 bg-white/5 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 1, ease: 'easeOut', delay: 0.3 }}
-                    className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-purple-500"
-                  />
-                </div>
-                <p className="text-gray-500 text-xs">{doneLessons} de {contents.length} aulas concluídas</p>
               </div>
 
               <div className="bg-[#0f0d1a] border border-white/5 rounded-2xl overflow-hidden">
@@ -259,36 +212,6 @@ export default function StudentPanel({ onLogout }) {
                   </div>
                 </div>
                 <span className="text-white font-black text-lg shrink-0">{doneLessons}/{contents.length}</span>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                {contents.map((c, i) => (
-                  <motion.div
-                    key={c.id}
-                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                    className={`bg-[#0f0d1a] border rounded-2xl px-5 py-4 flex items-center gap-4 transition-colors ${
-                      c.locked ? 'border-white/5 opacity-50' : c.done ? 'border-green-500/20' : 'border-white/5 hover:border-cyan-500/20'
-                    }`}
-                  >
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                      c.locked ? 'bg-white/5 border border-white/10 text-gray-600'
-                      : c.done ? 'bg-green-500/20 border border-green-500/30 text-green-400'
-                      : 'bg-cyan-500/10 border border-cyan-500/20 text-cyan-400'
-                    }`}>
-                      {c.locked ? <Lock size={15} /> : c.done ? <CheckCircle size={15} /> : <Play size={15} />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold text-sm truncate">{c.title}</p>
-                      <p className="text-gray-500 text-xs">{c.module}</p>
-                    </div>
-                    <div className="flex items-center gap-1 text-gray-500 text-xs shrink-0">
-                      <Timer size={12} />
-                      {c.duration}
-                    </div>
-                    {c.done && <span className="text-green-400 text-xs font-bold shrink-0">Concluída</span>}
-                    {c.locked && <span className="text-gray-600 text-xs font-bold shrink-0">Bloqueada</span>}
-                  </motion.div>
-                ))}
               </div>
             </motion.div>
           )}

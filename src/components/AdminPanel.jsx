@@ -403,32 +403,38 @@ function AdminPanel({ onLogout }) {
                           <th className="text-left text-gray-500 font-semibold px-6 py-4">Usuário</th>
                           <th className="text-left text-gray-500 font-semibold px-6 py-4">Turma</th>
                           <th className="text-left text-gray-500 font-semibold px-6 py-4">Criado em</th>
+                          <th className="text-left text-gray-500 font-semibold px-6 py-4">Senha</th>
                           <th className="text-left text-gray-500 font-semibold px-6 py-4">Ações</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        {filteredUsers.map((user) => {
-                          const turma = classes.find((c) => c.id === user.class_id)
-                          return (
-                            <tr key={user.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
-                              <td className="text-white px-6 py-4">{user.name}</td>
-                              <td className="text-gray-400 px-6 py-4">{user.username}</td>
-                              <td className="text-gray-400 px-6 py-4">{turma ? turma.name : '—'}</td>
-                              <td className="text-gray-500 px-6 py-4 text-xs">{new Date(user.created_at).toLocaleDateString('pt-BR')}</td>
-                              <td className="px-6 py-4">
-                                <div className="flex items-center gap-2">
-                                  <button onClick={() => setEditingUser(user)} className="w-8 h-8 bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/20 hover:border-purple-500/40 text-purple-400 rounded-lg flex items-center justify-center transition-all cursor-pointer">
-                                    <Pencil size={14} />
-                                  </button>
-                                  <button onClick={() => handleDeleteUser(user.id)} className="w-8 h-8 bg-red-600/20 hover:bg-red-600/40 border border-red-500/20 hover:border-red-500/40 text-red-400 rounded-lg flex items-center justify-center transition-all cursor-pointer">
-                                    <Trash2 size={14} />
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          )
-                        })}
-                      </tbody>
+                <tbody>
+                  {filteredUsers.map((user) => {
+                    const turma = classes.find((c) => c.id === user.class_id)
+                    return (
+                      <tr key={user.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
+                        <td className="text-white px-6 py-4">{user.name}</td>
+                        <td className="text-gray-400 px-6 py-4">{user.username}</td>
+                        <td className="text-gray-400 px-6 py-4">{turma ? turma.name : '—'}</td>
+                        <td className="text-gray-500 px-6 py-4 text-xs">{new Date(user.created_at).toLocaleDateString('pt-BR')}</td>
+                        <td className="px-6 py-4">
+                          <span className="bg-white/5 border border-white/10 text-gray-400 text-xs font-mono px-3 py-1.5 rounded-lg">
+                            {user.password}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <button onClick={() => setEditingUser(user)} className="w-8 h-8 bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/20 hover:border-purple-500/40 text-purple-400 rounded-lg flex items-center justify-center transition-all cursor-pointer">
+                              <Pencil size={14} />
+                            </button>
+                            <button onClick={() => handleDeleteUser(user.id)} className="w-8 h-8 bg-red-600/20 hover:bg-red-600/40 border border-red-500/20 hover:border-red-500/40 text-red-400 rounded-lg flex items-center justify-center transition-all cursor-pointer">
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      )
+                    })}
+                  </tbody>
                     </table>
                   </div>
                 </div>

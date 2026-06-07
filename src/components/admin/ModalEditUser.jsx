@@ -69,7 +69,6 @@ function ModalEditUser({ onClose, onSave, user, classes }) {
 
           <div className="flex flex-col gap-4">
 
-            {/* Nome */}
             <div className="flex flex-col gap-2">
               <label className="text-gray-400 text-xs font-semibold uppercase tracking-widest">
                 Nome completo
@@ -85,7 +84,6 @@ function ModalEditUser({ onClose, onSave, user, classes }) {
               </div>
             </div>
 
-            {/* Usuário */}
             <div className="flex flex-col gap-2">
               <label className="text-gray-400 text-xs font-semibold uppercase tracking-widest">
                 Usuário
@@ -101,7 +99,6 @@ function ModalEditUser({ onClose, onSave, user, classes }) {
               </div>
             </div>
 
-            {/* Nova Senha */}
             <div className="flex flex-col gap-2">
               <label className="text-gray-400 text-xs font-semibold uppercase tracking-widest">
                 Nova Senha <span className="text-gray-600 normal-case">(deixe em branco para manter)</span>
@@ -124,7 +121,6 @@ function ModalEditUser({ onClose, onSave, user, classes }) {
               </div>
             </div>
 
-            {/* Turma */}
             <div className="flex flex-col gap-2">
               <label className="text-gray-400 text-xs font-semibold uppercase tracking-widest">
                 Turma
