@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FileText, Plus, X, Trash2, Pencil, CheckCircle } from 'lucide-react'
+import { getModulos, createExam, deleteExam, getExams } from "../../services/api";
 
-function ExamForm({ form, setForm, questions, setQuestions, showAddQuestion, setShowAddQuestion, newQuestion, setNewQuestion, classes, onClose, onSave, title, subtitle, buttonLabel, buttonClass }) {
+function ExamForm({ form, setForm, questions, setQuestions, showAddQuestion, setShowAddQuestion, newQuestion, setNewQuestion, classes, modulos, onClose, onSave, title, subtitle, buttonLabel, buttonClass }) {
 
   const handleChange = (field, value) => setForm((prev) => ({ ...prev, [field]: value }))
 
@@ -22,11 +24,20 @@ function ExamForm({ form, setForm, questions, setQuestions, showAddQuestion, set
     setNewQuestion((prev) => ({ ...prev, options: updated }))
   }
 
-  const handleSave = () => {
-    if (!form.title || !form.module) { alert('Preencha os campos obrigatórios.'); return }
-    if (questions.length === 0) { alert('Adicione pelo menos uma questão.'); return }
-    onSave()
-  }
+  const handleSave = async () => {
+    if (!form.title || !form.module) {
+      alert('Preencha os campos obrigatórios.');
+      return;
+    }
+
+    if (questions.length === 0) {
+      alert('Adicione pelo menos uma questão.');
+      return;
+    }
+
+    await onSave();
+    onClose();
+  };
 
   return (
     <motion.div
@@ -73,11 +84,12 @@ function ExamForm({ form, setForm, questions, setQuestions, showAddQuestion, set
             <div className="flex flex-col gap-2">
               <label className="text-gray-400 text-xs font-semibold uppercase tracking-widest">Módulo</label>
               <select value={form.module} onChange={(e) => handleChange('module', e.target.value)} className="w-full bg-white/5 border border-white/10 focus:border-purple-500/60 rounded-xl px-4 py-3 text-white text-sm outline-none appearance-none cursor-pointer">
-                <option value="" className="bg-[#0f0d1a]">Selecione</option>
-                <option value="Módulo 1 — Lógica com Python" className="bg-[#0f0d1a]">Módulo 1</option>
-                <option value="Módulo 2 — Back-end .NET" className="bg-[#0f0d1a]">Módulo 2</option>
-                <option value="Módulo 3 — Front-end React" className="bg-[#0f0d1a]">Módulo 3</option>
-                <option value="Módulo 4 — Desenvolvimento com IA" className="bg-[#0f0d1a]">Módulo 4</option>
+            <option value="">Selecione</option>
+            {modulos.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nome}
+              </option>
+            ))}
               </select>
             </div>
             <div className="flex flex-col gap-2">
@@ -175,6 +187,21 @@ function ModalNewExam({ onClose, onSave, classes }) {
   const [questions, setQuestions] = useState([])
   const [showAddQuestion, setShowAddQuestion] = useState(false)
   const [newQuestion, setNewQuestion] = useState({ text: '', options: ['', '', '', ''], correct: 0 })
+  const [modulos, setModulos] = useState([])
+
+  useEffect(() => {
+  const fetchModulos = async () => {
+    try {
+      const res = await getModulos()
+      setModulos(res.dados)
+    } catch (err) {
+      console.error(err)
+      alert('Erro ao buscar módulos')
+    }
+  }
+
+    fetchModulos()
+  }, [])
 
   return (
     <ExamForm
@@ -183,8 +210,24 @@ function ModalNewExam({ onClose, onSave, classes }) {
       showAddQuestion={showAddQuestion} setShowAddQuestion={setShowAddQuestion}
       newQuestion={newQuestion} setNewQuestion={setNewQuestion}
       classes={classes}
+      modulos={modulos}
       onClose={onClose}
-      onSave={() => { onSave({ ...form, questions, id: Date.now() }); onClose() }}
+      onSave={async () => {
+        try {
+          const payload = {
+            ...form,
+            questions
+          }
+
+          const res = await createExam(payload)
+
+          onSave(res.dados)
+          onClose()
+        } catch (err) {
+          console.error(err)
+          alert(err.message)
+        }
+      }}
       title="Nova Prova"
       subtitle="Crie uma prova com questões de alternativas."
       buttonLabel="Salvar Prova"
@@ -194,20 +237,61 @@ function ModalNewExam({ onClose, onSave, classes }) {
 }
 
 function ModalEditExam({ onClose, onSave, exam, classes }) {
-  const [form, setForm] = useState({ title: exam.title || '', description: exam.description || '', class_id: exam.class_id || '', module: exam.module || '', status: exam.status || 'draft' })
+  const [form, setForm] = useState({
+    title: exam.title || '',
+    description: exam.description || '',
+    class_id: exam.class_id || '',
+    module: exam.module || '',
+    status: exam.status || 'draft'
+  })
+
   const [questions, setQuestions] = useState(exam.questions || [])
   const [showAddQuestion, setShowAddQuestion] = useState(false)
   const [newQuestion, setNewQuestion] = useState({ text: '', options: ['', '', '', ''], correct: 0 })
+  const [modulos, setModulos] = useState([])
+
+  useEffect(() => {
+    const fetchModulos = async () => {
+      try {
+        const res = await getModulos()
+        setModulos(res.dados)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    fetchModulos()
+  }, [])
 
   return (
     <ExamForm
-      form={form} setForm={setForm}
-      questions={questions} setQuestions={setQuestions}
-      showAddQuestion={showAddQuestion} setShowAddQuestion={setShowAddQuestion}
-      newQuestion={newQuestion} setNewQuestion={setNewQuestion}
+      form={form}
+      setForm={setForm}
+      questions={questions}
+      setQuestions={setQuestions}
+      showAddQuestion={showAddQuestion}
+      setShowAddQuestion={setShowAddQuestion}
+      newQuestion={newQuestion}
+      setNewQuestion={setNewQuestion}
       classes={classes}
+      modulos={modulos}
       onClose={onClose}
-      onSave={() => { onSave(exam.id, { ...form, questions }); onClose() }}
+      onSave={async () => {
+        try {
+          const payload = {
+            ...form,
+            questions
+          }
+
+          const res = await updateExam(exam.id, payload)
+
+          onSave(exam.id, res.dados)
+          onClose()
+        } catch (err) {
+          console.error(err)
+          alert(err.message)
+        }
+      }}
       title="Editar Prova"
       subtitle="Atualize as informações da prova."
       buttonLabel="Salvar Alterações"
@@ -220,6 +304,20 @@ function Content({ classes }) {
   const [exams, setExams] = useState([])
   const [showNewExam, setShowNewExam] = useState(false)
   const [editingExam, setEditingExam] = useState(null)
+
+  useEffect(() => {
+  const fetchExams = async () => {
+    try {
+      const res = await getExams()
+      setExams(res.dados)
+    } catch (err) {
+      console.error(err)
+      alert('Erro ao carregar provas')
+    }
+  }
+
+    fetchExams()
+  }, [])
 
   const handleUpdateExam = (id, data) => {
     setExams((prev) => prev.map((e) => e.id === id ? { ...e, ...data } : e))
@@ -267,7 +365,20 @@ function Content({ classes }) {
                   <button onClick={() => setEditingExam(exam)} className="w-7 h-7 bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/20 text-purple-400 rounded-lg flex items-center justify-center cursor-pointer">
                     <Pencil size={12} />
                   </button>
-                  <button onClick={() => setExams((prev) => prev.filter((e) => e.id !== exam.id))} className="w-7 h-7 bg-red-600/20 hover:bg-red-600/40 border border-red-500/20 text-red-400 rounded-lg flex items-center justify-center cursor-pointer">
+                  <button
+                    onClick={async () => {
+                      if (!confirm('Deseja excluir essa prova?')) return
+
+                      try {
+                        await deleteExam(exam.id)
+                        setExams(prev => prev.filter(e => e.id !== exam.id))
+                      } catch (err) {
+                        console.error(err)
+                        alert('Erro ao excluir')
+                      }
+                    }}
+                    className="w-7 h-7 bg-red-600/20 hover:bg-red-600/40 border border-red-500/20 text-red-400 rounded-lg flex items-center justify-center cursor-pointer"
+                  >
                     <Trash2 size={12} />
                   </button>
                 </div>
@@ -292,11 +403,26 @@ function Content({ classes }) {
         </div>
       )}
 
-      <AnimatePresence>
-        {showNewExam && <ModalNewExam onClose={() => setShowNewExam(false)} onSave={(e) => setExams((prev) => [...prev, e])} classes={classes} />}
-        {editingExam && <ModalEditExam exam={editingExam} classes={classes} onClose={() => setEditingExam(null)} onSave={handleUpdateExam} />}
-      </AnimatePresence>
+      <AnimatePresence mode="wait">
+        {showNewExam && (
+          <ModalNewExam
+            key="new-exam"
+            onClose={() => setShowNewExam(false)}
+            onSave={(e) => setExams((prev) => [...prev, e])}
+            classes={classes}
+          />
+        )}
 
+        {editingExam && (
+          <ModalEditExam
+            key="edit-exam"
+            exam={editingExam}
+            classes={classes}
+            onClose={() => setEditingExam(null)}
+            onSave={handleUpdateExam}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }

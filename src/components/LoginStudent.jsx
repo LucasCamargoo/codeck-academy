@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Lock, Eye, EyeOff, GraduationCap, User } from 'lucide-react'
+import { loginUser } from '../../src/services/api'
 
 function LoginStudent({ onClose, onLogin }) {
   const [showPassword, setShowPassword] = useState(false)
@@ -87,12 +88,23 @@ function LoginStudent({ onClose, onLogin }) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => {
-                if (usuario === 'aluno.codeck' && password === 'codeck@2026') {
-                  onLogin()
+              onClick={async () => {
+                try {
+                  const response = await loginUser(usuario, password)
+
+                  const user = response.dados
+
+                  console.log('Login sucesso:', user)
+
+                  localStorage.setItem('user', JSON.stringify(user))
+                  localStorage.setItem('token', user.token)
+                  localStorage.setItem('refreshToken', user.refreshToken)
+
+                  onLogin(user)
                   onClose()
-                } else {
-                  alert('Usuário ou senha incorretos!')
+
+                } catch (error) {
+                  alert(error.message)
                 }
               }}
               className="w-full bg-linear-to-r from-cyan-600 to-purple-600 text-white font-black py-3.5 rounded-xl text-sm cursor-pointer hover:opacity-90 transition-opacity mt-2"

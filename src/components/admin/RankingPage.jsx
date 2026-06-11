@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Trophy, Medal, Crown, RotateCcw, ChevronDown, ChevronUp, Search, X } from 'lucide-react'
-import { supabase } from '../../lib/supabase'
 
 export default function RankingPage({ users, classes }) {
   const [rankings, setRankings] = useState([])

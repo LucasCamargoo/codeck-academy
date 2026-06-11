@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Lock, Mail, Eye, EyeOff, ShieldCheck, User  } from 'lucide-react'
+import { loginUser } from '../../src/services/api'
+import { jwtDecode } from 'jwt-decode'
 
 function LoginAdmin({ onClose, onLogin  }) {
   const [showPassword, setShowPassword] = useState(false)
@@ -87,12 +89,33 @@ function LoginAdmin({ onClose, onLogin  }) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => {
-                if (email === 'admin.codeck' && password === 'codeck@2026') {
+              onClick={async () => {
+                try {
+                  const response = await loginUser(email, password)
+
+                  const { accessToken, refreshToken } = response.dados
+
+                  // 🔥 decodifica o token
+                  const decoded = jwtDecode(accessToken)
+
+                  // 🔥 salva corretamente
+                  localStorage.setItem('token', accessToken)
+                  localStorage.setItem('refreshToken', refreshToken)
+                  localStorage.setItem('user', JSON.stringify(decoded))
+
+                  // 🔥 valida admin corretamente
+                  const isAdmin = decoded.perfil?.toLowerCase().includes('admin')
+
+                  if (!isAdmin) {
+                    alert('Acesso não autorizado')
+                    return
+                  }
+
                   onClose()
-                  setTimeout(() => onLogin(), 150)
-                } else {
-                  alert('Usuário ou senha incorretos!')
+                  setTimeout(() => onLogin(decoded), 150)
+
+                } catch (error) {
+                  alert(error.message)
                 }
               }}
               className="w-full bg-linear-to-r from-purple-600 to-fuchsia-600 text-white font-black py-3.5 rounded-xl text-sm cursor-pointer hover:opacity-90 transition-opacity mt-2"

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { LogOut, LayoutDashboard, BookOpen, Trophy, ClipboardList, ChevronRight, GraduationCap, Star, Crown, Medal, Menu, X, Zap } from 'lucide-react'
-import { supabase } from '../lib/supabase'
+import { logoutUser } from '../../src/services/api'
 
 const MOCK_USER = { id: 'mock-001', name: 'João Silva', username: 'aluno.codeck', class_id: null }
 
@@ -86,7 +86,22 @@ export default function StudentPanel({ onLogout }) {
       </nav>
 
       <button
-        onClick={onLogout}
+        onClick={async () => {
+          try {
+            const refresh = localStorage.getItem('refreshToken')
+
+            await logoutUser(refresh)
+
+          } catch (err) {
+            alert('Erro ao sair. Tente novamente.')
+          }
+
+          localStorage.removeItem('user')
+          localStorage.removeItem('token')
+          localStorage.removeItem('refreshToken')
+
+          window.location.reload()
+        }}
         className="flex items-center gap-2 text-gray-500 hover:text-white text-sm font-semibold px-4 py-3 rounded-xl hover:bg-white/5 transition-all cursor-pointer"
       >
         <LogOut size={16} />

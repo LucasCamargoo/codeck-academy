@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShieldCheck, LogOut, Users, ChevronRight, BookOpen, Trophy , Pencil, LayoutDashboard, GraduationCap, TrendingUp, Trash2, Search, Menu, X } from 'lucide-react'
+import { ShieldCheck, LogOut, Users, ChevronRight, BookOpen, Trophy , Pencil, LayoutDashboard, GraduationCap, TrendingUp, Trash2, Search, Menu, X, Video } from 'lucide-react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import ModalNewUser from './admin/ModalNewUser'
 import ModalNewClass from './admin/ModalNewClass'
@@ -8,8 +8,6 @@ import ModalEditUser from './admin/ModalEditUser'
 import ModalEditClass from './admin/ModalEditClass'
 import RankingPage from './admin/RankingPage'
 import Content from './admin/Content'
-import { supabase } from '../lib/supabase'
-import { Video } from 'lucide-react'
 
 function AdminPanel({ onLogout }) {
   const [activePage, setActivePage] = useState('dashboard')
@@ -26,57 +24,38 @@ function AdminPanel({ onLogout }) {
 
   useEffect(() => {
     fetchUsers()
-    fetchClasses()
+    //fetchClasses()
   }, [])
 
   const fetchUsers = async () => {
     setLoading(true)
-    const { data, error } = await supabase.from('users').select('*').order('created_at', { ascending: false })
-    if (!error) setUsers(data)
+    setUsers([])
     setLoading(false)
   }
 
-  const fetchClasses = async () => {
-    const { data, error } = await supabase.from('classes').select('*').order('created_at', { ascending: false })
-    if (!error) setClasses(data)
+  //const fetchClasses = async () => {
+   // const { data, error } = await supabase.from('classes').select('*').order('created_at', { ascending: false })
+    //if (!error) setClasses(data)
+  //}
+
+  const handleSaveUser = async () => {
+    alert('Ainda não implementado')
   }
 
-  const handleSaveUser = async (user) => {
-    const { error } = await supabase.from('users').insert([user])
-    if (!error) fetchUsers()
-    else alert('Erro ao salvar usuário!')
+  const handleSaveClass = async () => {
+    alert('Ainda não implementado')
   }
 
-  const handleSaveClass = async (cls) => {
-    const { error } = await supabase.from('classes').insert([cls])
-    if (!error) fetchClasses()
-    else alert('Erro ao salvar turma!')
+  const handleUpdateUser = async () => {
+    alert('Ainda não implementado')
   }
 
-  const handleUpdateUser = async (id, data) => {
-    const { error } = await supabase.from('users').update(data).eq('id', id)
-    if (!error) fetchUsers()
-    else alert('Erro ao atualizar usuário!')
+  const handleUpdateClass = async () => {
+    alert('Ainda não implementado')
   }
 
-  const handleUpdateClass = async (id, data) => {
-    const { error } = await supabase.from('classes').update(data).eq('id', id)
-    if (!error) fetchClasses()
-    else alert('Erro ao atualizar turma!')
-  }
-
-  const handleDeleteUser = async (id) => {
-    if (!confirm('Tem certeza que deseja excluir este usuário?')) return
-    const { error } = await supabase.from('users').delete().eq('id', id)
-    if (!error) fetchUsers()
-    else alert('Erro ao excluir usuário!')
-  }
-
-  const handleDeleteClass = async (id) => {
-    if (!confirm('Tem certeza que deseja excluir esta turma?')) return
-    const { error } = await supabase.from('classes').delete().eq('id', id)
-    if (!error) fetchClasses()
-    else alert('Erro ao excluir turma!')
+  const handleDeleteClass = async () => {
+    alert('Ainda não implementado')
   }
 
   const activeClasses = classes.filter((c) => {
